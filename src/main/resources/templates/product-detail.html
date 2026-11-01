@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('ShopZone - Product Detail')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container my-5">
+    <div class="row" th:if="${product != null}">
+        <div class="col-md-6">
+            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="img-fluid rounded shadow"
+                 style="max-height: 450px; width: 100%; object-fit: cover;"
+                 onerror="this.src='https://via.placeholder.com/600x450?text=Product'">
+        </div>
+        <div class="col-md-6">
+            <span class="badge badge-category mb-2" th:text="${product.category}">Category</span>
+            <h2 class="fw-bold" th:text="${product.name}">Product Name</h2>
+            <p class="text-muted" th:text="${product.description}">Description</p>
+            <h3 class="price-tag mb-3" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</h3>
+
+            <div class="mb-3" th:if="${product.stock > 0}">
+                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>In Stock (<span th:text="${product.stock}"></span> available)</span>
+            </div>
+            <div class="mb-3" th:if="${product.stock == 0}">
+                <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+            </div>
+
+            <form th:action="@{'/cart/add/' + ${product.id}}" method="post" sec:authorize="isAuthenticated()" th:if="${product.stock > 0}">
+                <div class="row g-2 mb-3">
+                    <div class="col-auto">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" value="1" min="1" th:max="${product.stock}" class="form-control" style="width: 80px;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
+                    <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                </button>
+            </form>
+
+            <div sec:authorize="!isAuthenticated()" class="mt-3">
+                <a th:href="@{/login}" class="btn btn-outline-primary btn-lg rounded-pill px-5">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to Buy
+                </a>
+            </div>
+
+            <a th:href="@{/products}" class="btn btn-outline-secondary mt-3 rounded-pill">
+                <i class="bi bi-arrow-left me-1"></i>Back to Products
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

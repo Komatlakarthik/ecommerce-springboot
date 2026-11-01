@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('ShopZone - My Orders')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container my-5">
+    <h2 class="mb-4"><i class="bi bi-box-seam me-2"></i>My Orders</h2>
+
+    <div th:if="${success}" class="alert alert-success alert-custom"><i class="bi bi-check-circle me-2"></i><span th:text="${success}"></span></div>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
+        <i class="bi bi-box display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">No orders yet</h4>
+        <a th:href="@{/products}" class="btn btn-primary rounded-pill mt-2"><i class="bi bi-bag me-2"></i>Start Shopping</a>
+    </div>
+
+    <div class="card shadow-sm mb-3" th:each="order : ${orders}">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <h5 class="mb-1">Order #<span th:text="${order.id}"></span></h5>
+                    <small class="text-muted" th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy, HH:mm')}"></small>
+                </div>
+                <div>
+                    <span class="badge rounded-pill"
+                          th:classappend="${order.status.name() == 'CONFIRMED'} ? 'bg-success' : (${order.status.name() == 'SHIPPED'} ? 'bg-info' : (${order.status.name() == 'DELIVERED'} ? 'bg-primary' : (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-warning')))"
+                          th:text="${order.status}">Status</span>
+                </div>
+            </div>
+            <hr>
+            <div th:each="item : ${order.items}" class="d-flex justify-content-between mb-1">
+                <span><span th:text="${item.product.name}">Product</span> x <span th:text="${item.quantity}">1</span></span>
+                <span th:text="'$' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">$0.00</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <strong>Total:</strong>
+                <strong class="price-tag" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$0.00</strong>
+            </div>
+            <small class="text-muted d-block mt-2"><i class="bi bi-geo-alt me-1"></i><span th:text="${order.shippingAddress}">Address</span></small>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

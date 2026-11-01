@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('ShopZone - Products')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="bi bi-grid me-2"></i>Our Products</h2>
+        </div>
+        <div class="col-md-4">
+            <form th:action="@{/products}" method="get">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search products..." th:value="${search}">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <a th:href="@{/products}" class="btn btn-sm btn-outline-primary rounded-pill me-1">All</a>
+        <a th:href="@{/products(category='Electronics')}" class="btn btn-sm btn-outline-primary rounded-pill me-1">Electronics</a>
+        <a th:href="@{/products(category='Clothing')}" class="btn btn-sm btn-outline-primary rounded-pill me-1">Clothing</a>
+        <a th:href="@{/products(category='Footwear')}" class="btn btn-sm btn-outline-primary rounded-pill me-1">Footwear</a>
+        <a th:href="@{/products(category='Home & Kitchen')}" class="btn btn-sm btn-outline-primary rounded-pill me-1">Home &amp; Kitchen</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-custom"><i class="bi bi-check-circle me-2"></i><span th:text="${success}"></span></div>
+
+    <div class="row g-4">
+        <div class="col-md-4 col-lg-3" th:each="product : ${products}">
+            <div class="card h-100">
+                <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img"
+                     onerror="this.src='https://via.placeholder.com/400x220?text=Product'">
+                <div class="card-body d-flex flex-column">
+                    <span class="badge badge-category mb-2 align-self-start" th:text="${product.category}">Category</span>
+                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                    <p class="card-text text-muted small flex-grow-1" th:text="${#strings.abbreviate(product.description, 80)}">Description</p>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="price-tag" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                        <div>
+                            <a th:href="@{'/products/' + ${product.id}}" class="btn btn-outline-primary btn-sm rounded-pill me-1">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <form th:action="@{'/cart/add/' + ${product.id}}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
+                                <button type="submit" class="btn btn-primary btn-sm rounded-pill"><i class="bi bi-cart-plus"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <small class="text-muted mt-1" th:if="${product.stock > 0}"><i class="bi bi-check-circle text-success"></i> In Stock (<span th:text="${product.stock}"></span>)</small>
+                    <small class="text-danger mt-1" th:if="${product.stock == 0}"><i class="bi bi-x-circle"></i> Out of Stock</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">No products found</h4>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

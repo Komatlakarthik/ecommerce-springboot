@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('ShopZone - Register')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg p-4">
+                <h3 class="text-center mb-4"><i class="bi bi-person-plus me-2 text-primary"></i>Create Account</h3>
+
+                <form th:action="@{/register}" th:object="${user}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" th:field="*{fullName}" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" th:field="*{username}" class="form-control" required>
+                        <div th:if="${#fields.hasErrors('username')}" class="text-danger small" th:errors="*{username}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" th:field="*{email}" class="form-control" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="text-danger small" th:errors="*{email}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" th:field="*{password}" class="form-control" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" th:field="*{phone}" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea th:field="*{address}" class="form-control" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill">
+                        <i class="bi bi-person-plus me-2"></i>Register
+                    </button>
+                </form>
+                <p class="text-center mt-3 text-muted">Already have an account? <a th:href="@{/login}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>
